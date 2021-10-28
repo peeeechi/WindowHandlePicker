@@ -1,6 +1,13 @@
 .vs/*
+WindowHandlePicker/WindowHandlePicker/*
 WindowHandlePicker/bin/*
 WindowHandlePicker/obj/*
 WindowHandlePicker/WindowHandlePicker.csproj.user
+
 WindowsFormsApp1/bin/*
 WindowsFormsApp1/obj/*
+
+winforms-sample/winforms-sample/*
+winforms-sample/bin/*
+winforms-sample/obj/*
+winforms-sample/winforms-sample.csproj.user

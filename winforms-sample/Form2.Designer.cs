@@ -1,5 +1,5 @@
 ﻿
-namespace WindowsFormsApp1
+namespace winforms_sample
 {
     partial class Form2
     {
@@ -29,6 +29,8 @@ namespace WindowsFormsApp1
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+
             this.button1 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
@@ -60,7 +62,7 @@ namespace WindowsFormsApp1
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button1);
             this.Name = "Form2";
-            this.Text = "Form2(.NET Framework winforms)";
+            this.Text = "Form2(.NET 5 winforms)";
             this.ResumeLayout(false);
             this.PerformLayout();
 
