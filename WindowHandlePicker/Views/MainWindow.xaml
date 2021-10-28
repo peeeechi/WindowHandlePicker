@@ -1,0 +1,108 @@
+﻿<Window x:Class="WindowHandlePicker.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:vm="clr-namespace:WindowHandlePicker.ViewModels"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:prism="http://prismlibrary.com/"
+        prism:ViewModelLocator.AutoWireViewModel="True"
+        Height="400"
+        Width="1200"
+        Title="{Binding Title}">
+    <Window.Resources>
+        <!--d:DataContext="{d:DesignInstance vm:MainWindowViewModel}"-->
+        <vm:StrCnvInt x:Key="StrCnvInt"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <TextBlock Text="Target X" Margin="5"/>
+            <TextBox Text="{Binding TargetX, UpdateSourceTrigger=LostFocus, Converter={StaticResource StrCnvInt}}" Margin="5" Height="20" Width="60"/>
+
+            <TextBlock Text="Target Y" Margin="5"/>
+            <TextBox Text="{Binding TargetY, UpdateSourceTrigger=LostFocus, Converter={StaticResource StrCnvInt}}" Margin="5" Height="20" Width="60"/>
+        </StackPanel>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Root" Margin="5" />
+        <StackPanel Grid.Row="2" Grid.RowSpan="3"
+                    Grid.Column="0" Grid.ColumnSpan="2"
+                    Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Class name" Margin="5"/>
+                <TextBlock Text="{Binding RootWindowHandle.HWnd}" Margin="5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Class name" Margin="5"/>
+                <TextBlock Text="{Binding RootWindowHandle.ClassName}" Margin="5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Window text" Margin="5"/>
+                <TextBlock Text="{Binding RootWindowHandle.WindowText}" Margin="5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="PID" Margin="5"/>
+                <TextBlock Text="{Binding RootWindowHandle.Pid}" Margin="5"/>
+            </StackPanel>
+        </StackPanel>
+
+        <TextBlock Grid.Row="1" Grid.Column="2" Text="Target" Margin="5" />
+        <StackPanel Grid.Row="2" Grid.RowSpan="4"
+                    Grid.Column="2" Grid.ColumnSpan="2"
+                    Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Class name" Margin="5"/>
+                <TextBlock Text="{Binding WindowInfoViewModel.HWnd}" Margin="5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Class name" Margin="5"/>
+                <TextBlock Text="{Binding WindowInfoViewModel.ClassName}" Margin="5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Window text" Margin="5"/>
+                <TextBlock Text="{Binding WindowInfoViewModel.WindowText}" Margin="5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="PID" Margin="5"/>
+                <TextBlock Text="{Binding WindowInfoViewModel.Pid}" Margin="5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Send Click Message" Command="{Binding ClickExecute}" Margin="5" Padding="5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Send Text" Margin="5"/>
+                <TextBox Text="{Binding SendText, UpdateSourceTrigger=PropertyChanged}" Margin="5" Height="20" Width="100"/>
+                <Button Content="Send Write Message" Command="{Binding SendTextExecute}" Margin="5" Padding="5"/>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Mouse X:" Margin="5"/>
+                <TextBlock Text="{Binding MouseX}" Margin="5"/>
+                <TextBlock Text="Mouse Y:" Margin="5"/>
+                <TextBlock Text="{Binding MouseY}" Margin="5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="HWND:" Margin="5"/>
+                <TextBlock Text="{Binding Hwnd}" Margin="5"/>
+            </StackPanel>
+        </StackPanel>
+
+        
+
+        <ContentControl prism:RegionManager.RegionName="ContentRegion" />
+    </Grid>
+</Window>

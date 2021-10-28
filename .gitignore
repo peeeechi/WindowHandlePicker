@@ -1,0 +1,6 @@
+.vs/*
+WindowHandlePicker/bin/*
+WindowHandlePicker/obj/*
+WindowHandlePicker/WindowHandlePicker.csproj.user
+WindowsFormsApp1/bin/*
+WindowsFormsApp1/obj/*
