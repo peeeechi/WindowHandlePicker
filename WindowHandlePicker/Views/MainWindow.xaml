@@ -26,15 +26,23 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+        <!-- <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
             <TextBlock Text="Target X" Margin="5"/>
             <TextBox Text="{Binding TargetX, UpdateSourceTrigger=LostFocus, Converter={StaticResource StrCnvInt}}" Margin="5" Height="20" Width="60"/>
 
             <TextBlock Text="Target Y" Margin="5"/>
             <TextBox Text="{Binding TargetY, UpdateSourceTrigger=LostFocus, Converter={StaticResource StrCnvInt}}" Margin="5" Height="20" Width="60"/>
+        </StackPanel> -->
+
+        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <TextBlock Text="Foreground window hWnd" Margin="5"/>
+            <TextBlock Text="{Binding ForegroundWindowHandle.HWnd}" Margin="5"/>
         </StackPanel>
+
+
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Root" Margin="5" />
         <StackPanel Grid.Row="2" Grid.RowSpan="3"
@@ -59,7 +67,7 @@
         </StackPanel>
 
         <TextBlock Grid.Row="1" Grid.Column="2" Text="Target" Margin="5" />
-        <StackPanel Grid.Row="2" Grid.RowSpan="4"
+        <StackPanel Grid.Row="2" Grid.RowSpan="5"
                     Grid.Column="2" Grid.ColumnSpan="2"
                     Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
@@ -77,6 +85,12 @@
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="PID" Margin="5"/>
                 <TextBlock Text="{Binding WindowInfoViewModel.Pid}" Margin="5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Window Center X, Y" Margin="5"/>
+                <TextBlock Text="{Binding WindowInfoViewModel.WindowCenterX}" Margin="5"/>
+                <TextBlock Text="," Margin="0 5"/>
+                <TextBlock Text="{Binding WindowInfoViewModel.WindowCenterY}" Margin="5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Button Content="Send Click Message" Command="{Binding ClickExecute}" Margin="5" Padding="5"/>

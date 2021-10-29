@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
 
 namespace WindowHandlePicker.Models
 {
     // https://qiita.com/kob58im/items/34724e36603351d78596#1-2-findwindowex
+
+
+#region structure
 
     /// <summary>
     /// POINT構造体は、ポイントのx座標とy座標を定義します
@@ -51,11 +55,11 @@ namespace WindowHandlePicker.Models
         /// <summary>
         /// 長方形の幅を取得します
         /// </summary>
-        // public Int32 width { get => right-left; }
+        public Int32 width { get => right-left; }
         /// <summary>
         /// 長方形の高さを取得します
         /// </summary>
-        // public Int32 height { get => bottom-top; }
+        public Int32 height { get => bottom-top; }
     }
 
     /// <summary>
@@ -139,14 +143,6 @@ namespace WindowHandlePicker.Models
         public int time;
         public UIntPtr dwExtraInfo;
     }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct Win32Point
-    {
-        public Int32 X;
-        public Int32 Y;
-    }
-
     
     [StructLayout(LayoutKind.Sequential)]
     public struct KBDLLHOOKSTRUCT
@@ -158,12 +154,84 @@ namespace WindowHandlePicker.Models
         public IntPtr dwExtraInfo;
     }
 
+    /// <summary>
+    /// シミュレートされたマウスイベントに関する情報が含まれています<br/>
+    /// https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-mouseinput<br/>
+    /// マウスイベント(mouse_eventの引数と同様のデータ)
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MOUSEINPUT
+    {
+        /// <summary>
+        /// dwFlagsメンバーの値に応じて、マウスの絶対位置、または最後のマウスイベントが生成されてからのモーションの量<br/>絶対データは、マウスのx座標として指定されます<br/>相対データは、移動したピクセル数として指定されます
+        /// </summary>
+        public int dx;
+        /// <summary>
+        /// dwFlagsメンバーの値に応じて、マウスの絶対位置、または最後のマウスイベントが生成されてからのモーションの量<br/>絶対データは、マウスのy標として指定されます<br/>相対データは、移動したピクセル数として指定されます
+        /// </summary>
+        public int dy;
+        /// <summary>
+        /// dwFlagsにMOUSEEVENTF_WHEELが含まれている場合、mouseDataはホイールの動きの量を指定します<br/>正の値は、ホイールがユーザーから離れて前方に回転したことを示します<br/>負の値は、ホイールがユーザーに向かって後方に回転したことを示します<br/>ホイールの1回のクリックは、WHEEL_DELTAとして定義されます<br/>これは120です<br/>Windows Vista：dwFlagsにMOUSEEVENTF_HWHEELが含まれている場合、dwDataはホイールの動きの量を指定します<br/>正の値は、ホイールが右に回転したことを示します<br/>負の値は、ホイールが左に回転したことを示します<br/>ホイールの1回のクリックは、WHEEL_DELTAとして定義されます<br/>これは120です<br/>dwFlagsにMOUSEEVENTF_WHEEL、MOUSEEVENTF_XDOWN、またはMOUSEEVENTF_XUPが含まれていない場合、mouseDataはゼロである必要があります<br/>dwFlagsにMOUSEEVENTF_XDOWNまたはMOUSEEVENTF_XUPが含まれている場合、mouseDataはどのXボタンが押されたか離されたかを指定します<br/>この値は、次のフラグの任意の組み合わせにすることができます
+        /// </summary>
+        public uint mouseData;
+        /// <summary>
+        /// マウスの動きとボタンのクリックのさまざまな側面を指定するビットフラグのセット<br/>このメンバーのビットは、次の値の任意の適切な組み合わせにすることができます<br/>マウスボタンのステータスを指定するビットフラグは、進行中の状態ではなく、ステータスの変化を示すために設定されます<br/>たとえば、マウスの左ボタンを押したままにすると、最初に左ボタンを押したときにMOUSEEVENTF_LEFTDOWNが設定されますが、それ以降のモーションでは設定されません<br/>同様に、MOUSEEVENTF_LEFTUPは、ボタンが最初に離されたときにのみ設定されます<br/>MOUSEEVENTF_WHEELフラグとMOUSEEVENTF_XDOWNまたはMOUSEEVENTF_XUPフラグの両方をdwFlagsパラメーターで同時に指定することはできません<br/>どちらも、mouseDataフィールドを使用する必要があるためです
+        /// </summary>
+        public MouseEventFlgs dwFlags;
+        /// <summary>
+        /// イベントのタイムスタンプ（ミリ秒単位）<br/>このパラメータが0の場合、システムは独自のタイムスタンプを提供します
+        /// </summary>
+        public uint time;
+        /// <summary>
+        /// マウスイベントに関連付けられた追加の値<br/>アプリケーションはGetMessageExtraInfoを呼び出して、この追加情報を取得しま
+        /// </summary>
+        public UIntPtr dwExtraInfo;
+        // public uint dwExtraInfo;
+    }
+
+    // キーボードイベント(keybd_eventの引数と同様のデータ)
+    [StructLayout(LayoutKind.Sequential)]
+    public struct KEYBDINPUT
+    {
+        public short wVk;
+        public short wScan;
+        public int dwFlags;
+        public int time;
+        public int dwExtraInfo;
+    };
+
+    // ハードウェアイベント
+    [StructLayout(LayoutKind.Sequential)]
+    public struct HARDWAREINPUT
+    {
+        public int uMsg;
+        public short wParamL;
+        public short wParamH;
+    };
+
+    // 各種イベント(SendInputの引数データ)
+    [StructLayout(LayoutKind.Explicit)] // unionの代わり
+    public struct INPUT
+    {
+        [FieldOffset(0)] public InputFlgs type;
+        [FieldOffset(8)] public MOUSEINPUT mi;
+        [FieldOffset(8)] public KEYBDINPUT ki;
+        [FieldOffset(8)] public HARDWAREINPUT hi;
+        // [FieldOffset(4)] public MOUSEINPUT mi;
+        // [FieldOffset(4)] public KEYBDINPUT ki;
+        // [FieldOffset(4)] public HARDWAREINPUT hi;
+    };
+
+
+#endregion
+
     //internal const int WHEEL_DELTA              = 120;
 
     //internal const int KEYEVENTF_KEYDOWN        = 0x00000000;
     //internal const int KEYEVENTF_KEYUP          = 0x00000002;
     //internal const int KEYEVENTF_EXTENDEDKEY    = 0x000000001;
 
+#region enums
 
     /// <summary>
     /// マウスの動きとボタンのクリックのさまざまな側面を制御します<br/>このパラメーターは、次の値の特定の組み合わせにすることができます<br/>
@@ -550,6 +618,27 @@ namespace WindowHandlePicker.Models
 
     }
 
+    /// <summary>
+    /// endInputによって使用され、キーストローク、マウスの動き、マウスのクリックなどの入力イベントを合成するための情報を格納します<br/>
+    /// https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-input
+    /// </summary>
+    [Flags]
+    public enum InputFlgs: uint
+    {
+        /// <summary>
+        /// イベントはマウスイベントです<br/>ユニオンのmi構造を使用します<br/>
+        /// </summary>
+        INPUT_MOUSE = 0,
+        /// <summary>
+        /// イベントはキーボードイベントです<br/>ユニオンのki構造を使用します<br/>
+        /// </summary>
+        INPUT_KEYBOARD = 1,
+        /// <summary>
+        /// イベントはハードウェアイベントです<br/>ユニオンのhi構造を使用します<br/>
+        /// </summary>
+        INPUT_HARDWARE = 2,
+    }
+
     public enum WindowLongParam
     {
         GWL_WNDPROC = -4,
@@ -564,7 +653,7 @@ namespace WindowHandlePicker.Models
         DWLP_DLGPROC = 4
     }
 
-    [Flags()]
+    [Flags]
     public enum SetWindowPosFlags : UInt32
     {
         SWP_ASYNCWINDOWPOS = 0x4000,
@@ -665,6 +754,8 @@ namespace WindowHandlePicker.Models
         /// </summary>
         WH_SYSMSGFILTER = 6,
     }
+
+#endregion
 
     public delegate bool EnumWindowsDelegate(IntPtr hWnd, IntPtr lparam);
 
@@ -875,18 +966,6 @@ namespace WindowHandlePicker.Models
         [DllImport("Kernel32.dll", CharSet = CharSet.Auto)]
         public static extern UInt32 GetLastError();
 
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetWindowLong(IntPtr hWnd, int nIndex);
-
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr GetCurrentThreadId();
-
-        [DllImport("user32.dll")]
-        public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
-
-        [DllImport("user32.dll")]
-        public static extern bool SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
-
         /// <summary>
         /// アプリケーション定義のフックプロシージャをフックチェーンにインストールします<br/>フックプロシージャをインストールして、特定のタイプのイベントについてシステムを監視します<br/>これらのイベントは、特定のスレッド、または呼び出し元のスレッドと同じデスクトップ内のすべてのスレッドに関連付けられています<br/><br/>
         /// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowshookexa
@@ -940,15 +1019,53 @@ namespace WindowHandlePicker.Models
         /// <returns>関数が成功した場合、戻り値は指定されたモジュールへのハンドルです<br/>関数が失敗した場合、戻り値はNULLです<br/>拡張エラー情報を取得するには、GetLastErrorを呼び出します <br/>備考:<br/>返されるハンドルはグローバルでも継承可能でもありません<br/>複製したり、別のプロセスで使用したりすることはできません<br/>場合lpModuleNameにはパスが含まれていないと同じベース名と拡張子を持つ複数のロードされたモジュールがあり、あなたが返されるモジュールのハンドルを予測することはできません<br/>この問題を回避するには、パスを指定するか、サイドバイサイドアセンブリを使用するか、GetModuleHandleExを使用してDLL名ではなくメモリの場所を指定します<br/>GetModuleHandle関数は、その参照カウントをインクリメントすることなく、マップされたモジュールへのハンドルを返します<br/>ただし、このハンドルがFreeLibrary関数に渡されると、マップされたモジュールの参照カウントが減少します<br/>そのため、返されたハンドル通らないのGetModuleHandleに FreeLibraryの機能を<br/>これを行うと、DLLモジュールが時期尚早にマップ解除される可能性があります<br/>この関数は、マルチスレッドアプリケーションで慎重に使用する必要があります<br/>この関数がハンドルを返すまでの間、モジュールハンドルが有効であるという保証はありません<br/>たとえば、スレッドがモジュールハンドルを取得したが、ハンドルを使用する前に、2番目のスレッドがモジュールを解放するとします<br/>システムが別のモジュールをロードすると、最近解放されたモジュールハンドルを再利用できます<br/>したがって、最初のスレッドには、意図したものとは異なるモジュールへのハンドルがあります</returns>
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         internal static extern IntPtr GetModuleHandle(string lpModuleName);
-
         //[DllImport("kernel32.dll", EntryPoint = "GetModuleHandleW", SetLastError = true)]
         //public static extern IntPtr GetModuleHandle(string moduleName);
 
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetWindowLong(IntPtr hWnd, int nIndex);
 
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr GetCurrentThreadId();
 
+        [DllImport("user32.dll")]
+        public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+        [DllImport("user32.dll")]
+        public static extern bool SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+        /// <summary>
+        /// キーストローク、マウスモーション、およびボタンクリックを合成します<br/>
+        /// https://docs.microsoft.com/ja-jp/windows/win32/api/winuser/nf-winuser-sendinput<br/>
+        /// キー操作、マウス操作をシミュレート(擬似的に操作する)
+        /// </summary>
+        /// <param name="nInputs"></param>
+        /// <param name="pInputs"></param>
+        /// <param name="cbsize"></param>
+        /// <returns>この関数は、キーボードまたはマウスの入力ストリームに正常に挿入されたイベントの数を返します<br/>関数がゼロを返す場合、入力はすでに別のスレッドによってブロックされています<br/>拡張エラー情報を取得するには、GetLastErrorを呼び出します<br/>この関数は、UIPIによってブロックされると失敗します<br/>GetLastErrorも戻り値も、失敗がUIPIブロッキングによって引き起こされたことを示すものではないことに注意してください<br/>備考:<br/>この関数はUIPIの対象です<br/>アプリケーションは、同等以下の整合性レベルにあるアプリケーションにのみ入力を挿入できます<br/>SendInputの関数は、でイベント挿入入力直列キーボードやマウスの入力ストリームに構造<br/>これらのイベントは、（キーボードやマウスを用いて）ユーザによって、またはへのコールのいずれかによって挿入他のキーボードやマウスの入力イベントが点在されていないkeybd_event、MOUSE_EVENT、またはそれに他のコールSendInput<br/>この機能は、キーボードの現在の状態をリセットしません<br/>関数が呼び出されたときにすでに押されているキーは、この関数が生成するイベントに干渉する可能性があります<br/>この問題を回避するには、GetAsyncKeyState関数を使用してキーボードの状態を確認し、必要に応じて修正します<br/>タッチキーボードはwinnls.hで定義された代理マクロを使用して入力をシステムに送信するため、キーボードイベントフックのリスナーはタッチキーボードからの入力をデコードする必要があります<br/>詳細については、サロゲートと補足文字を参照してください<br/>アクセシビリティアプリケーションは、SendInputを使用して、シェルによって処理されるアプリケーション起動ショートカットキーに対応するキーストロークを挿入できます<br/>この機能は、他の種類のアプリケーションで機能することが保証されていません<br/></returns>
+        [DllImport("user32.dll")]
+        public extern static uint SendInput([In] int nInputs, [In] INPUT[] pInputs, [In] int cbsize);
+
+        /// <summary>
+        /// 指定した画面座標にカーソルを移動します<br/>新しい座標が最新のClipCursor関数呼び出しによって設定された画面の長方形内にない場合、システムはカーソルが長方形内にとどまるように座標を自動的に調整します<br/>
+        /// https://docs.microsoft.com/ja-jp/windows/win32/api/winuser/nf-winuser-setcursorpos
+        /// </summary>
+        /// <param name="X">画面座標でのカーソルの新しいx座標</param>
+        /// <param name="Y">画面座標でのカーソルの新しいy座標</param>
+        /// <returns>成功した場合はゼロ以外を返し、そうでない場合はゼロを返します<br/>拡張エラー情報を取得するには、GetLastErrorを呼び出します<br/>備考:<br/>カーソルは共有リソースです<br/>ウィンドウは、カーソルがウィンドウのクライアント領域にある場合にのみカーソルを移動する必要があります<br/>呼び出しプロセスには、ウィンドウステーションへのWINSTA_WRITEATTRIBUTESアクセスが必要です<br/>SetCursorPosを呼び出すときは、入力デスクトップが現在のデスクトップである必要があります<br/>OpenInputDesktopを呼び出して、現在のデスクトップが入力デスクトップであるかどうかを確認します<br/>そうでない場合は、OpenInputDesktopから返されたHDESKを使用してSetThreadDesktopを呼び出し、そのデスクトップに切り替えます<br/></returns>
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public extern static bool SetCursorPos([In] int X, [In] int Y);
+
+        // 仮想キーコードをスキャンコードに変換
+        [DllImport("user32.dll", EntryPoint = "MapVirtualKeyA")]
+        public extern static int MapVirtualKey(int wCode, int wMapType);
 
     }
 
+    /// <summary>
+    /// NativeMethods
+    /// </summary>
     public static class User32Util
     {
         const int MAX_TEXT_LENGTH = 500;
@@ -1087,6 +1204,82 @@ namespace WindowHandlePicker.Models
                 ret = NativeMethods.SetActiveWindow(parenthWnd);
             }
             var retcode = NativeMethods.SendMessage(hWnd, WindowsMessage.BM_CLICK, IntPtr.Zero, IntPtr.Zero);
+        }
+
+        /// <summary>
+        /// SendInput を用いて左クリック処理をエミュレートします
+        /// </summary
+        /// <param name="screanX">クリックするスクリーン座標のX値</param>
+        /// <param name="screanY">クリックするスクリーン座標のY値</param>
+        public static void ClickLeft_Emulate(int screanX, int screanY)
+        {
+            // マウス操作実行用のデータ
+            const int num = 1;
+            INPUT[] inp = new INPUT[num];
+            inp[0] = new INPUT();
+
+            // (1)マウスカーソルを移動する(スクリーン座標でX座標=800ピクセル,Y=400ピクセルの位置)
+            // inp[0].type = InputFlgs.INPUT_MOUSE;
+            // inp[0].mi.dwFlags = MouseEventFlgs.MOUSEEVENTF_MOVE | MouseEventFlgs.MOUSEEVENTF_ABSOLUTE;
+            // inp[0].mi.dx = screanX * (65536 / Screen.PrimaryScreen.Bounds.Width);
+            // inp[0].mi.dy = screanY * (65536 / Screen.PrimaryScreen.Bounds.Height);
+            // inp[0].mi.mouseData = 0;
+            // inp[0].mi.dwExtraInfo = new UIntPtr(0);
+            // inp[0].mi.time = 0;
+            // // マウス操作実行
+            // var ret = NativeMethods.SendInput(inp.Length, inp, Marshal.SizeOf(inp[0]));
+
+            // if (ret == 0)
+            // {
+            //     throw new Exception("入力はすでに別のスレッドによってブロックされています");
+            // }
+
+            bool isSuccess = NativeMethods.SetCursorPos(screanX, screanY);
+            if (!isSuccess)
+            {
+                throw new Exception("入力はすでに別のスレッドによってブロックされています");
+            }
+
+            System.Threading.Thread.Sleep(100);
+            inp[0] = new INPUT();
+
+            // (2)マウスの左ボタンを押す
+            inp[0].type = InputFlgs.INPUT_MOUSE;
+            // inp[0].mi.dwFlags = MouseEventFlgs.MOUSEEVENTF_LEFTDOWN | MouseEventFlgs.MOUSEEVENTF_ABSOLUTE;
+            inp[0].mi.dwFlags = MouseEventFlgs.MOUSEEVENTF_LEFTDOWN;
+            // inp[0].mi.dx = 0;
+            // inp[0].mi.dy = 0;
+            // inp[0].mi.mouseData = 0;
+            // inp[0].mi.dwExtraInfo = new UIntPtr(0);
+            // inp[0].mi.time = 0;
+
+            // マウス操作実行
+            var ret = NativeMethods.SendInput(inp.Length, inp, Marshal.SizeOf(inp[0]));
+
+            if (ret == 0)
+            {
+                throw new Exception("入力はすでに別のスレッドによってブロックされています");
+            }
+            System.Threading.Thread.Sleep(100);
+
+            inp[0] = new INPUT();
+            // (3)マウスの右ボタンを離す
+            inp[0].type = InputFlgs.INPUT_MOUSE;
+            // inp[0].mi.dwFlags = MouseEventFlgs.MOUSEEVENTF_LEFTUP | MouseEventFlgs.MOUSEEVENTF_ABSOLUTE;
+            inp[0].mi.dwFlags = MouseEventFlgs.MOUSEEVENTF_LEFTUP;
+            // inp[0].mi.dx = 0;
+            // inp[0].mi.dy = 0;
+            // inp[0].mi.mouseData = 0;
+            // inp[0].mi.dwExtraInfo = new UIntPtr(0);
+            // inp[0].mi.time = 0;
+            // マウス操作実行
+            ret = NativeMethods.SendInput(inp.Length, inp, Marshal.SizeOf(inp[0]));
+
+            if (ret == 0)
+            {
+                throw new Exception("入力はすでに別のスレッドによってブロックされています");
+            }
+            // System.Threading.Thread.Sleep(200);
         }
 
         /// <summary>

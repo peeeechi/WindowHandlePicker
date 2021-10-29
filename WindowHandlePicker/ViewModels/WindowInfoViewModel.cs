@@ -31,6 +31,16 @@ namespace WindowHandlePicker.ViewModels
 
         private WINDOWINFO _wi = new WINDOWINFO();
         
+        public int WindowCenterX
+        { 
+            get => _wi.rcWindow.left + (_wi.rcWindow.width / 2);
+        }
+
+        public int WindowCenterY
+        { 
+            get => _wi.rcWindow.top + (_wi.rcWindow.height / 2);
+        }
+
         private Int32 _pid;
         public Int32 Pid { get => _pid; private set => SetProperty(ref _pid, value); }
 
@@ -60,9 +70,19 @@ namespace WindowHandlePicker.ViewModels
         {
             System.Threading.Tasks.Task.Run(() =>
             {
-                User32Util.Click(HWnd);
+                // User32Util.Click(HWnd);
+
+                try
+                {
+                    User32Util.ClickLeft_Emulate(WindowCenterX, WindowCenterY);                     
+                }
+                catch (System.Exception e)
+                {
+                    System.Windows.Forms.MessageBox.Show(e.Message);
+                    // throw;
+                }
             });
-           
+
         }
 
         public void SendText(string text)

@@ -89,10 +89,17 @@ namespace WindowHandlePicker.ViewModels
         private WindowInfoViewModel _rootWindow = new WindowInfoViewModel();
         public WindowInfoViewModel RootWindowHandle { get => _rootWindow; private set => SetProperty(ref _rootWindow, value); }
 
+        /// <summary>
+        /// Foreground Window のハンドル
+        /// </summary>
+        private WindowInfoViewModel _foregroundWindow = new WindowInfoViewModel();
+        public WindowInfoViewModel ForegroundWindowHandle { get => _foregroundWindow; private set => SetProperty(ref _foregroundWindow, value); }
+
         private void SendClickMessage()
         {
             if (WindowInfoViewModel.HWnd != IntPtr.Zero)
             {
+                NativeMethods.SetActiveWindow(RootWindowHandle.HWnd);
                 WindowInfoViewModel.Click();
             }
         }
@@ -149,6 +156,12 @@ namespace WindowHandlePicker.ViewModels
 
             var h = NativeMethods.WindowFromPoint(p);
             Hwnd = h.ToInt32();
+
+            var foregroundHWnd = NativeMethods.GetForegroundWindow();
+            if (foregroundHWnd != IntPtr.Zero)
+            {
+                ForegroundWindowHandle = new WindowInfoViewModel(foregroundHWnd);
+            }
 
             // マウスのどのようなイベントが発生したのかで処理を分岐する。
             switch ((MouseMessage)wParam)
